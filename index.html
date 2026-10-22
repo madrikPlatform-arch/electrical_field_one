@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>المجالات الكهربية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<!-- MathJax: \( ... \) و $ ... $ -->
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]'], ['$$', '$$']] },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+  :root {
+    --primary-blue: #1e3a8a;
+    --blue-600: #2563eb;
+    --teal: #0d9488;
+    --teal-dark: #0f766e;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --ok: #16a34a;
+    --ok-bg: #dcfce7;
+    --bad: #dc2626;
+    --bad-bg: #fee2e2;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
+    background: linear-gradient(180deg, #e0f2fe 0%, var(--bg) 260px);
+    color: var(--text);
+    line-height: 1.8;
+    min-height: 100vh;
+  }
+  .container { max-width: 820px; margin: 0 auto; padding: 16px 14px 48px; }
+
+  /* ---------- Header ---------- */
+  .site-header {
+    background: linear-gradient(135deg, var(--primary-blue), var(--teal));
+    color: #fff;
+    border-radius: 18px;
+    padding: 22px 18px;
+    text-align: center;
+    box-shadow: 0 10px 24px rgba(30, 58, 138, .25);
+    margin-bottom: 18px;
+  }
+  .site-header h1 { margin: 0 0 4px; font-size: 1.7rem; font-weight: 800; }
+  .site-header p { margin: 0; opacity: .92; font-size: .95rem; }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 16px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, .05);
+  }
+  .hidden { display: none !important; }
+
+  /* ---------- Login ---------- */
+  #login-section { max-width: 440px; margin: 28px auto 0; text-align: center; }
+  #login-section h2 { margin: 0 0 6px; color: var(--primary-blue); font-size: 1.3rem; }
+  #login-section p.sub { margin: 0 0 18px; color: var(--muted); font-size: .92rem; }
+  .field {
+    width: 100%;
+    padding: 13px 14px;
+    font: inherit;
+    font-size: 1.1rem;
+    text-align: center;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    outline: none;
+    background: #f8fafc;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .field:focus { border-color: var(--blue-600); box-shadow: 0 0 0 4px rgba(37, 99, 235, .12); background: #fff; }
+  .btn {
+    display: inline-block;
+    width: 100%;
+    margin-top: 14px;
+    padding: 13px 16px;
+    font: inherit;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #fff;
+    background: linear-gradient(135deg, var(--primary-blue), var(--blue-600));
+    border: 0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform .08s, opacity .15s;
+  }
+  .btn:active { transform: scale(.985); }
+  .btn:disabled { opacity: .6; cursor: not-allowed; }
+  .btn.teal { background: linear-gradient(135deg, var(--teal-dark), var(--teal)); }
+  .btn.ghost { background: #fff; color: var(--primary-blue); border: 2px solid var(--primary-blue); }
+  #login-error { color: var(--bad); font-weight: 700; min-height: 1.6em; margin-top: 12px; }
+
+  /* ---------- Exam top bar ---------- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, .96);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, .08);
+  }
+  #welcome { font-weight: 700; color: var(--primary-blue); font-size: 1rem; }
+  .timer {
+    direction: ltr;
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+    color: var(--teal-dark);
+    background: #ccfbf1;
+    padding: 4px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .progress { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; margin: -4px 4px 14px; }
+  .progress > div { height: 100%; width: 0; background: linear-gradient(90deg, var(--teal), var(--blue-600)); transition: width .25s; }
+
+  /* ---------- Result banner ---------- */
+  #result-banner {
+    text-align: center;
+    color: #fff;
+    border-radius: 18px;
+    padding: 22px 16px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--teal));
+    box-shadow: 0 10px 24px rgba(30, 58, 138, .25);
+  }
+  #result-banner .label { opacity: .9; font-size: .95rem; }
+  #result-banner .score { font-size: 2.6rem; font-weight: 800; line-height: 1.3; direction: ltr; }
+  #result-banner .pct { font-size: 1.05rem; font-weight: 700; }
+  #sync-status { margin-top: 10px; font-size: .92rem; background: rgba(255,255,255,.18); display: inline-block; padding: 4px 14px; border-radius: 99px; }
+  #retry-btn { margin-top: 10px; width: auto; padding: 8px 18px; font-size: .95rem; background: #fff; color: var(--primary-blue); }
+
+  /* ---------- Questions ---------- */
+  .q-card { margin-bottom: 14px; scroll-margin-top: 80px; }
+  .q-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .q-num {
+    flex: none;
+    background: var(--primary-blue);
+    color: #fff;
+    font-weight: 800;
+    font-size: .85rem;
+    padding: 2px 12px;
+    border-radius: 99px;
+  }
+  .q-text { font-weight: 600; font-size: 1.03rem; }
+  .q-img-wrap { text-align: center; margin: 10px 0 12px; }
+  .q-img-wrap img {
+    max-width: 100%;
+    max-height: 340px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: zoom-in;
+  }
+  .options { display: grid; gap: 8px; margin-top: 8px; }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    background: #f8fafc;
+    transition: border-color .12s, background .12s;
+  }
+  .opt:hover { border-color: #93c5fd; }
+  .opt input { position: absolute; opacity: 0; pointer-events: none; }
+  .opt .letter {
+    flex: none;
+    width: 30px; height: 30px;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: var(--primary-blue);
+    font-weight: 800;
+    font-size: .9rem;
+  }
+  .opt .otext { flex: 1; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+  .opt:has(input:checked) { border-color: var(--blue-600); background: #eff6ff; }
+  .opt:has(input:checked) .letter { background: var(--blue-600); color: #fff; }
+  .opt:has(input:focus-visible) { outline: 3px solid rgba(37, 99, 235, .35); }
+
+  .q-card.locked .opt { cursor: default; }
+  .q-card.locked .opt:hover { border-color: var(--border); }
+  .opt.correct { border-color: var(--ok) !important; background: var(--ok-bg) !important; }
+  .opt.correct .letter { background: var(--ok) !important; color: #fff !important; }
+  .opt.wrong { border-color: var(--bad) !important; background: var(--bad-bg) !important; }
+  .opt.wrong .letter { background: var(--bad) !important; color: #fff !important; }
+
+  .feedback { margin-top: 12px; padding: 10px 12px; border-radius: 12px; font-size: .95rem; }
+  .feedback.ok { background: var(--ok-bg); color: #14532d; }
+  .feedback.bad { background: var(--bad-bg); color: #7f1d1d; }
+  .feedback .fb-title { font-weight: 800; margin-bottom: 2px; }
+  .feedback .fb-explain { color: var(--text); }
+
+  .submit-wrap { margin-top: 8px; }
+  #submit-msg { text-align: center; color: var(--muted); margin-top: 8px; min-height: 1.5em; font-size: .92rem; }
+
+  mjx-container { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+
+  /* ---------- Lightbox ---------- */
+  #lightbox {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(15, 23, 42, .88);
+    display: none; align-items: center; justify-content: center;
+    padding: 16px; cursor: zoom-out;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 100%; max-height: 100%; border-radius: 10px; background: #fff; }
+
+  footer { text-align: center; color: var(--muted); font-size: .8rem; margin-top: 26px; }
+
+  @media (min-width: 640px) {
+    .site-header h1 { font-size: 2.1rem; }
+    .card { padding: 24px 24px; }
+    .q-text { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="site-header">
+    <h1>المجالات الكهربية</h1>
+    <p id="meta-line"></p>
+  </header>
+
+  <!-- ===================== تسجيل الدخول ===================== -->
+  <section id="login-section" class="card">
+    <h2>تسجيل الدخول للامتحان</h2>
+    <p class="sub">أدخل كود الطالب الخاص بك للبدء</p>
+    <input id="student-id" class="field" type="text" inputmode="numeric" autocomplete="off"
+           placeholder="كود الطالب (مثال: 18)" aria-label="كود الطالب">
+    <button id="login-btn" class="btn">تحقق ودخول</button>
+    <div id="login-error" role="alert"></div>
+  </section>
+
+  <!-- ===================== الامتحان ===================== -->
+  <section id="exam-section" class="hidden">
+    <div class="topbar">
+      <div id="welcome"></div>
+      <div class="timer" id="timer">00:00</div>
+    </div>
+    <div class="progress"><div id="progress-bar"></div></div>
+
+    <div id="result-banner" class="hidden"></div>
+
+    <div id="questions"></div>
+
+    <div class="submit-wrap">
+      <button id="submit-btn" class="btn teal">إنهاء الامتحان وإرسال النتيجة</button>
+      <div id="submit-msg"></div>
+    </div>
+  </section>
+
+  <footer>المجالات الكهربية • بالتوفيق للجميع</footer>
+</div>
+
+<div id="lightbox" aria-hidden="true"><img alt=""></div>
+
+<script>
+/* =====================================================================
+   الإعدادات
+   ===================================================================== */
+const EXAM_META = {
+  subject: "فيزياء",
+  module: "الكهروستاتيكية",
+  lesson: "اختبار على الوحدة الأولى (1)",
+  type: "اختبار"
+};
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzSAFcPEXqQfaFu4P2x1XTgBNsWb_V7OA9AjW_5HBfKB17nL_YcY4iE58AH3bObx5k/exec";
+
+/* الصور: ضع الصورة داخل مجلد img باسم رقم السؤال (مثال: img/5.png أو img/5.jpg) */
+const IMG_DIR = "img";
+const IMG_EXTS = ["png", "jpg", "jpeg", "webp", "gif", "svg", "PNG", "JPG", "JPEG", "WEBP"];
+
+/* =====================================================================
+   بنك الأسئلة
+   img = رقم الصورة (اسم الملف) • tag = نقطة الضعف عند الخطأ
+   ===================================================================== */
+const QUESTIONS = [
+  {
+    id: "1", label: "1", img: 1, tag: "وحدة قياس المجال الكهربائي",
+    text: String.raw`ما هي وحدة قياس المجال الكهربائي؟`,
+    options: [
+      String.raw`\(\text{N/C}\)`,
+      String.raw`\(\text{J}\cdot\text{C}\)`,
+      String.raw`\(\text{J/C}\)`,
+      String.raw`\(\text{V}\cdot\text{m}\)`
+    ],
+    answer: 0,
+    explain: String.raw`المجال \(E=\dfrac{F}{q}\) فوحدته \(\text{N/C}\) وتكافئ \(\text{V/m}\).`
+  },
+  {
+    id: "2", label: "2", img: 2, tag: "اتجاه المجال الكهربائي",
+    text: String.raw`يكون اتجاه المجال الكهربائي باتجاه ...............`,
+    options: [
+      "الشغل المبذول على شحنة اختبار",
+      "الجهد الكهربائي",
+      "القوة على شحنة اختبار موجبة",
+      "القوة على شحنة اختبار سالبة"
+    ],
+    answer: 2,
+    explain: "اتجاه المجال الكهربائي يُعرَّف بأنه اتجاه القوة المؤثرة على شحنة اختبار موجبة."
+  },
+  {
+    id: "3", label: "3", img: 3, tag: "العلاقة بين القوة والمجال F = qE",
+    text: String.raw`شحنة موجبة مقدارها \(3.0\times10^{-7}\,\text{C}\) في مجال كهربائي شدته \(27\,\text{N/C}\) باتجاه الجنوب. ما مقدار القوة المؤثرة على الشحنة؟`,
+    options: [
+      String.raw`\(3.0\times10^{-7}\,\text{N}\)`,
+      String.raw`\(1.2\times10^{6}\,\text{N}\)`,
+      String.raw`\(8.1\times10^{-6}\,\text{N}\)`,
+      String.raw`\(9.0\times10^{7}\,\text{N}\)`
+    ],
+    answer: 2,
+    explain: String.raw`\(F=qE=(3.0\times10^{-7})(27)=8.1\times10^{-6}\,\text{N}\) باتجاه الجنوب.`
+  },
+  {
+    id: "4", label: "4", img: 4, tag: "حساب المجال من القوة وتحديد اتجاهه",
+    text: String.raw`شحنة سالبة مقدارها \(1.5\times10^{-8}\,\text{C}\) تتأثر بقوة مقدارها \(0.030\,\text{N}\) باتجاه اليمين في مجال كهربائي. ما مقدار واتجاه المجال الكهربائي؟`,
+    options: [
+      String.raw`\(4.5\times10^{-7}\,\text{N/C}\) إلى اليمين`,
+      String.raw`\(4.5\times10^{-7}\,\text{N/C}\) إلى اليسار`,
+      String.raw`\(2.0\times10^{6}\,\text{N/C}\) إلى اليمين`,
+      String.raw`\(2.0\times10^{6}\,\text{N/C}\) إلى اليسار`
+    ],
+    answer: 3,
+    explain: String.raw`\(E=\dfrac{F}{q}=\dfrac{0.030}{1.5\times10^{-8}}=2.0\times10^{6}\,\text{N/C}\). الشحنة سالبة، فالمجال عكس اتجاه القوة، أي إلى اليسار.`
+  },
+  {
+    id: "5", label: "5", img: 5, tag: "تراكب المجالات (اتجاه المحصلة)",
+    text: String.raw`أربع شحنات كهربائية موجودة على زوايا مربع كما بالشكل. ما اتجاه محصلة المجال الكهربائي عند النقطة \(P\)؟`,
+    options: [
+      "نحو اليمين  →",
+      "نحو اليسار  ←",
+      "نحو الأسفل  ↓",
+      "نحو الأعلى  ↑"
+    ],
+    answer: 2,
+    explain: String.raw`المجالات الأفقية تلغي بعضها (المحصلة الأفقية = صفر)، وتبقى المركبة الرأسية لأسفل: \(2\!-\!1+2\!-\!1\) وحدات في اتجاه الأسفل. إذن المحصلة نحو الأسفل.`
+  },
+  {
+    id: "6", label: "6", img: 6, tag: "المجال الناتج عن شحنتين (مقدار واتجاه)",
+    text: String.raw`وفقاً للشكل: إذا كان \(Q=-2\,\mu\text{C}\) ، \(q=+2\,\mu\text{C}\) ، حيث \(Q\) على بعد \(4.0\,\text{m}\) فوق النقطة \(P\) و \(q\) على بعد \(3.0\,\text{m}\) يمين \(P\). ما المجال الكهربائي عند النقطة \(P\)؟`,
+    options: [
+      String.raw`\(3.1\times10^{3}\,\text{N/C}\) بزاوية \(29^\circ\) فوق الاتجاه السالب لمحور \(x\) (لأعلى اليسار)`,
+      String.raw`\(3.1\times10^{3}\,\text{N/C}\) بزاوية \(61^\circ\) فوق الاتجاه الموجب لمحور \(x\) (لأعلى اليمين)`,
+      String.raw`\(2.3\times10^{3}\,\text{N/C}\) بزاوية \(29^\circ\) فوق الاتجاه السالب لمحور \(x\) (لأعلى اليسار)`,
+      String.raw`\(2.3\times10^{3}\,\text{N/C}\) بزاوية \(61^\circ\) فوق الاتجاه السالب لمحور \(x\) (لأعلى اليسار)`
+    ],
+    answer: 2,
+    explain: String.raw`\(E_Q=\dfrac{kQ}{r^2}=\dfrac{(9\times10^9)(2\times10^{-6})}{4^2}=1125\,\text{N/C}\) (لأعلى)، \(E_q=\dfrac{kq}{r^2}=\dfrac{(9\times10^9)(2\times10^{-6})}{3^2}=2000\,\text{N/C}\) (لليسار). \(E_{net}=\sqrt{1125^2+2000^2}=2.3\times10^3\,\text{N/C}\) و \(\theta=\tan^{-1}\dfrac{1125}{2000}=29.4^\circ\).`
+  },
+  {
+    id: "7", label: "7", img: 7, tag: "تراكب المجالات (التماثل)",
+    text: String.raw`تقع ثلاث شحنات مقدار كلٍّ منها \(-9\,\text{mC}\) عند النقاط \((0,0)\) ، \((3\,\text{m},3\,\text{m})\) ، \((3\,\text{m},-3\,\text{m})\). ما مقدار المجال الكهربائي عند النقطة \((3\,\text{m},0)\)؟`,
+    options: [
+      String.raw`\(0.9\times10^{7}\,\text{N/C}\)`,
+      String.raw`\(1.2\times10^{7}\,\text{N/C}\)`,
+      String.raw`\(1.8\times10^{7}\,\text{N/C}\)`,
+      String.raw`\(2.4\times10^{7}\,\text{N/C}\)`
+    ],
+    answer: 0,
+    explain: String.raw`المركبتان الرأسيتان للشحنتين \((3,\pm3)\) تلغيان بعضهما، فتبقى شحنة نقطة الأصل: \(E=\dfrac{kq}{r^2}=\dfrac{(9\times10^9)(9\times10^{-3})}{3^2}=9\times10^{6}=0.9\times10^{7}\,\text{N/C}\) في الاتجاه \(-x\).`
+  },
+  {
+    id: "8", label: "8", img: 8, tag: "تراكب المجالات لثلاث شحنات (مركبات)",
+    text: String.raw`ثلاث شحنات نقطية: \(q_1=+1.50\,\mu\text{C}\) ، \(q_2=+2.50\,\mu\text{C}\) ، \(q_3=-3.50\,\mu\text{C}\). الشحنة \(q_1\) تقع عند \((0,a)\) والشحنة \(q_2\) عند نقطة الأصل \((0,0)\) والشحنة \(q_3\) عند \((b,0)\) ، حيث \(a=8.00\,\text{m}\) ، \(b=6.00\,\text{m}\). ما المجال الكهربائي الذي تنتجه الشحنات الثلاث عند النقطة \(P=(b,a)\)؟`,
+    options: [
+      String.raw`\(598\,\text{N/C}\) بزاوية \(31.5^\circ\) فوق محور \(+x\)`,
+      String.raw`\(598\,\text{N/C}\) بزاوية \(31.5^\circ\) أسفل محور \(+x\)`,
+      String.raw`\(510\,\text{N/C}\) في اتجاه \(+x\)`,
+      String.raw`\(312\,\text{N/C}\) في اتجاه \(-y\)`
+    ],
+    answer: 1,
+    explain: String.raw`\(E_1=375\,\text{N/C}\) (\(+x\))، \(E_2=225\,\text{N/C}\) بزاوية \(53^\circ\)، \(E_3=492\,\text{N/C}\) (\(-y\)). \(E_x=375+225\cos53^\circ=510\) ، \(E_y=225\sin53^\circ-492=-312\). \(E_{net}=\sqrt{510^2+312^2}=598\,\text{N/C}\) و \(\theta=\tan^{-1}\dfrac{312}{510}=31.5^\circ\) أسفل \(+x\).`
+  },
+  {
+    id: "9", label: "9", img: 9, tag: "المجال عند رأس مثلث قائم",
+    text: String.raw`وُضعت شحنتان نقطيتان على زاويتين من مثلث قائم كما في الشكل: \(-10.0\,\mu\text{C}\) عند الزاوية العليا و \(+15.0\,\mu\text{C}\) عند الزاوية اليمنى السفلى (الضلع الرأسي \(10.0\,\text{cm}\) والأفقي \(20.0\,\text{cm}\)). أوجد مقدار واتجاه المجال الكهربائي عند الزاوية الثالثة (زاوية القائمة).`,
+    options: [
+      String.raw`\(5.63\times10^{6}\,\text{N/C}\) نحو الأعلى`,
+      String.raw`\(9.61\times10^{6}\,\text{N/C}\) بزاوية \(69.4^\circ\) فوق محور \(+x\) (جهة اليمين)`,
+      String.raw`\(9.61\times10^{6}\,\text{N/C}\) بزاوية \(69.4^\circ\) فوق محور \(-x\) (أي \(110.6^\circ\) عن محور \(+x\))`,
+      String.raw`\(1.24\times10^{7}\,\text{N/C}\) نحو أعلى اليسار`
+    ],
+    answer: 2,
+    explain: String.raw`من الشحنة \(+15\,\mu\text{C}\): \(E_1=\dfrac{(9\times10^9)(15\times10^{-6})}{0.20^2}=3.375\times10^{6}\,\text{N/C}\) لليسار. من الشحنة \(-10\,\mu\text{C}\): \(E_2=\dfrac{(9\times10^9)(10\times10^{-6})}{0.10^2}=9\times10^{6}\,\text{N/C}\) لأعلى. \(E_{net}=9.61\times10^{6}\,\text{N/C}\) و \(\theta=\tan^{-1}\dfrac{9}{3.375}=69.4^\circ\) فوق \(-x\) أي \(110.6^\circ\).`
+  },
+  {
+    id: "10", label: "10", img: 10, tag: "المجال على استقامة واحدة (طرح المجالات)",
+    text: String.raw`شحنتان على استقامة واحدة: \(q_2=+1\,\mu\text{C}\) على بعد \(0.1\,\text{m}\) يمين النقطة \(C\) ، و \(q_1=-4\,\mu\text{C}\) على بعد \(0.2\,\text{m}\) يمين \(q_2\) (أي \(0.3\,\text{m}\) من \(C\)). ما مقدار واتجاه المجال الكهربائي عند النقطة \(C\)؟`,
+    options: [
+      String.raw`\(5\times10^{5}\,\text{N/C}\) إلى اليمين`,
+      String.raw`\(1.3\times10^{6}\,\text{N/C}\) إلى اليسار`,
+      String.raw`\(5\times10^{5}\,\text{N/C}\) إلى اليسار`,
+      String.raw`\(1.3\times10^{6}\,\text{N/C}\) إلى اليمين`
+    ],
+    answer: 2,
+    explain: String.raw`\(E_2=\dfrac{(9\times10^9)(1\times10^{-6})}{0.1^2}=9\times10^{5}\,\text{N/C}\) إلى اليسار (بعيداً عن الشحنة الموجبة). \(E_1=\dfrac{(9\times10^9)(4\times10^{-6})}{0.3^2}=4\times10^{5}\,\text{N/C}\) إلى اليمين (نحو الشحنة السالبة). المحصلة \(=9\times10^5-4\times10^5=5\times10^{5}\,\text{N/C}\) إلى اليسار.`
+  },
+  {
+    id: "11 (أ)", label: "11 (أ)", img: 11, tag: "تحديد إشارة الشحنة من اتجاه المجال",
+    text: String.raw`في الشكل المرفق: الشحنة \(q_1\) تقع على يسار النقطة \(P\) في نفس المستوى الأفقي، والشحنة \(q_2\) تقع أعلى \(P\) رأسياً، ومحصلة المجال \(E_{net}\) عند \(P\) متجهة لأسفل اليسار. ما إشارة كل شحنة؟`,
+    options: [
+      String.raw`\(q_1\) موجبة و \(q_2\) سالبة`,
+      String.raw`\(q_1\) سالبة و \(q_2\) موجبة`,
+      String.raw`\(q_1\) و \(q_2\) كلتاهما موجبة`,
+      String.raw`\(q_1\) و \(q_2\) كلتاهما سالبة`
+    ],
+    answer: 1,
+    explain: String.raw`المركبة الأفقية لليسار (نحو \(q_1\)) فالمجال يتجه نحو الشحنة، إذن \(q_1\) سالبة. المركبة الرأسية لأسفل (بعيداً عن \(q_2\) التي بالأعلى)، إذن \(q_2\) موجبة.`
+  },
+  {
+    id: "11 (ب)", label: "11 (ب)", img: 11, tag: "المجال عند موضع شحنة أخرى",
+    text: String.raw`في نفس الشكل (\(|q_1|=3\,\text{nC}\) ، \(|q_2|=4\,\text{nC}\) والمسافة بينهما \(0.50\,\text{m}\)): أوجد المجال الكهربائي عند موضع الشحنة \(2\) (الناتج عن الشحنة \(1\)).`,
+    options: [
+      String.raw`\(144\,\text{N/C}\) في اتجاه \(q_1\)`,
+      String.raw`\(108\,\text{N/C}\) بعيداً عن \(q_1\)`,
+      String.raw`\(108\,\text{N/C}\) في اتجاه \(q_1\)`,
+      String.raw`\(252\,\text{N/C}\) في اتجاه \(q_1\)`
+    ],
+    answer: 2,
+    explain: String.raw`\(E_1=\dfrac{kq_1}{r^2}=\dfrac{(9\times10^9)(3\times10^{-9})}{0.50^2}=108\,\text{N/C}\). وبما أن \(q_1\) سالبة فالمجال يتجه نحوها (على الخط الواصل بين الشحنتين).`
+  },
+  {
+    id: "12", label: "12", img: 12, tag: "نقطة انعدام المجال (شحنتان على محور x)",
+    text: String.raw`وُضعت شحنة \(+5.00\,\text{C}\) عند نقطة الأصل، ووُضعت الشحنة \(-3.00\,\text{C}\) عند \(x=1.00\,\text{m}\). عند أي مسافة محددة على طول محور \(x\) سيكون المجال الكهربائي يساوي صفر؟`,
+    options: [
+      String.raw`\(x=0.56\,\text{m}\)`,
+      String.raw`\(x=4.44\,\text{m}\)`,
+      String.raw`\(x=1.67\,\text{m}\)`,
+      String.raw`\(x=2.50\,\text{m}\)`
+    ],
+    answer: 1,
+    explain: String.raw`يكون المجال صفراً خارج الشحنتين وناحية الشحنة الأصغر (يمين \(x=1\)). نساوي \(E_1=E_2\): \(\dfrac{\sqrt5}{x}=\dfrac{\sqrt3}{x-1}\) ومنها \(x=\dfrac{\sqrt5}{\sqrt5-\sqrt3}=4.44\,\text{m}\).`
+  },
+  {
+    id: "13", label: "13", img: 13, tag: "نقطة انعدام المجال (شحنتان على محور y)",
+    text: String.raw`وُضعت شحنتان نقطيتان على المحور \(y\): الشحنة \((+q)\) عند نقطة الأصل \((0,0)\) والشحنة الأخرى \((-4q)\) عند \((y=+r)\). أين تكون محصلة المجال الكهربائي تساوي صفر؟`,
+    options: [
+      String.raw`\(y=-r\)`,
+      String.raw`\(y=-2r\)`,
+      String.raw`\(y=+2r\)`,
+      String.raw`\(y=+\dfrac{r}{2}\)`
+    ],
+    answer: 0,
+    explain: String.raw`المجال صفر خارج الشحنتين وناحية الشحنة الأصغر (أسفل الأصل). \(\dfrac{1}{-y}=\dfrac{2}{r-y}\Rightarrow -2y=r-y\Rightarrow y=-r\). عند \(y=-r\): \(E_{+q}=\dfrac{kq}{r^2}\) لأسفل و \(E_{-4q}=\dfrac{4kq}{(2r)^2}=\dfrac{kq}{r^2}\) لأعلى فيتلاشيان.`
+  }
+];
+
+/* =====================================================================
+   أدوات مساعدة
+   ===================================================================== */
+const $ = (id) => document.getElementById(id);
+const LETTERS = ["أ", "ب", "ج", "د", "هـ", "و"];
+
+let studentId = "";
+let studentName = "";
+let startTime = 0;
+let timerHandle = null;
+let examActive = false;
+let submitted = false;
+let lastPayload = null;
+
+$("meta-line").textContent = `${EXAM_META.subject} • ${EXAM_META.module} • ${EXAM_META.lesson}`;
+
+function typeset(nodes) {
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise(nodes).catch(() => {});
+  } else {
+    // MathJax لم يُحمَّل بعد: ننتظر انتهاء التحميل
+    window.addEventListener("load", () => {
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise(nodes).catch(() => {});
+    }, { once: true });
+  }
+}
+
+function fmtTime(s) {
+  const m = Math.floor(s / 60), r = s % 60;
+  return String(m).padStart(2, "0") + ":" + String(r).padStart(2, "0");
+}
+
+/* =====================================================================
+   تسجيل الدخول (GET)
+   ===================================================================== */
+async function login() {
+  const errEl = $("login-error");
+  const btn = $("login-btn");
+  const id = $("student-id").value.trim();
+  errEl.textContent = "";
+
+  if (!id) { errEl.textContent = "من فضلك أدخل كود الطالب."; return; }
+
+  btn.disabled = true;
+  const oldText = btn.textContent;
+  btn.textContent = "جارٍ التحقق...";
+
+  try {
+    const res = await fetch(`${SCRIPT_URL}?student_id=${encodeURIComponent(id)}`, { method: "GET", redirect: "follow" });
+    const data = await res.json();
+
+    if (data && data.valid === true) {
+      studentId = id;
+      studentName = data.student_name || "";
+      startExam();
+    } else {
+      errEl.textContent = (data && data.error) ? data.error : "الكود غير مسجل في قاعدة البيانات.";
+    }
+  } catch (e) {
+    errEl.textContent = "تعذر الاتصال بالخادم. تأكد من الإنترنت وحاول مرة أخرى.";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = oldText;
+  }
+}
+
+/* =====================================================================
+   عرض الامتحان
+   ===================================================================== */
+function loadQuestionImage(wrap, num) {
+  let i = 0;
+  const img = new Image();
+  img.alt = `شكل السؤال ${num}`;
+  img.onload = () => { wrap.appendChild(img); wrap.classList.remove("hidden"); };
+  img.onerror = () => {
+    i++;
+    if (i < IMG_EXTS.length) img.src = `${IMG_DIR}/${num}.${IMG_EXTS[i]}`;
+    /* لا توجد صورة لهذا السؤال: يبقى الحاوي مخفياً */
+  };
+  img.src = `${IMG_DIR}/${num}.${IMG_EXTS[0]}`;
+  img.addEventListener("click", () => openLightbox(img.src));
+}
+
+function buildQuestions() {
+  const root = $("questions");
+  root.innerHTML = "";
+
+  QUESTIONS.forEach((q, idx) => {
+    const card = document.createElement("article");
+    card.className = "card q-card";
+    card.dataset.qid = q.id;
+    card.dataset.tag = q.tag;
+    card.dataset.index = idx;
+
+    const opts = q.options.map((o, i) => `
+      <label class="opt" data-i="${i}">
+        <input type="radio" name="q${idx}" value="${i}">
+        <span class="letter">${LETTERS[i]}</span>
+        <span class="otext">${o}</span>
+      </label>`).join("");
+
+    card.innerHTML = `
+      <div class="q-head"><span class="q-num">السؤال ${q.label}</span></div>
+      <div class="q-text">${q.text}</div>
+      <div class="q-img-wrap hidden"></div>
+      <div class="options">${opts}</div>
+      <div class="feedback hidden"></div>`;
+
+    root.appendChild(card);
+    loadQuestionImage(card.querySelector(".q-img-wrap"), q.img);
+  });
+
+  root.addEventListener("change", updateProgress);
+  typeset([root]);
+}
+
+function updateProgress() {
+  let answered = 0;
+  QUESTIONS.forEach((_, idx) => {
+    if (document.querySelector(`input[name="q${idx}"]:checked`)) answered++;
+  });
+  $("progress-bar").style.width = (answered / QUESTIONS.length * 100) + "%";
+  if (!submitted) $("submit-msg").textContent = `تمت الإجابة على ${answered} من ${QUESTIONS.length}`;
+}
+
+function startExam() {
+  $("login-section").classList.add("hidden");
+  $("exam-section").classList.remove("hidden");
+  $("welcome").textContent = `مرحباً بك: ${studentName}`;
+
+  buildQuestions();
+  updateProgress();
+
+  examActive = true;
+  startTime = Date.now();
+  timerHandle = setInterval(() => {
+    $("timer").textContent = fmtTime(Math.floor((Date.now() - startTime) / 1000));
+  }, 1000);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* =====================================================================
+   التصحيح والإرسال (POST)
+   ===================================================================== */
+function strip(html) {
+  return String(html).replace(/\\\(|\\\)/g, "").trim();
+}
+
+function gradeExam() {
+  let score = 0;
+  const weaknesses = new Set();
+  const details = [];
+
+  QUESTIONS.forEach((q, idx) => {
+    const card = document.querySelector(`.q-card[data-index="${idx}"]`);
+    const checked = card.querySelector(`input[name="q${idx}"]:checked`);
+    const selected = checked ? parseInt(checked.value, 10) : -1;
+    const isCorrect = selected === q.answer;
+    if (isCorrect) score++; else weaknesses.add(card.dataset.tag);
+
+    details.push({
+      question: q.label,
+      selected: selected >= 0 ? LETTERS[selected] : null,
+      selectedText: selected >= 0 ? strip(q.options[selected]) : "",
+      correct: LETTERS[q.answer],
+      correctText: strip(q.options[q.answer]),
+      isCorrect,
+      tag: card.dataset.tag
+    });
+  });
+
+  return { score, weaknesses: [...weaknesses], details };
+}
+
+function showFeedback() {
+  QUESTIONS.forEach((q, idx) => {
+    const card = document.querySelector(`.q-card[data-index="${idx}"]`);
+    card.classList.add("locked");
+    card.querySelectorAll("input").forEach((i) => (i.disabled = true));
+
+    const checked = card.querySelector(`input[name="q${idx}"]:checked`);
+    const selected = checked ? parseInt(checked.value, 10) : -1;
+    const ok = selected === q.answer;
+
+    card.querySelectorAll(".opt").forEach((el) => {
+      const i = parseInt(el.dataset.i, 10);
+      if (i === q.answer) el.classList.add("correct");
+      else if (i === selected) el.classList.add("wrong");
+    });
+
+    const fb = card.querySelector(".feedback");
+    fb.classList.remove("hidden", "ok", "bad");
+    fb.classList.add(ok ? "ok" : "bad");
+    const title = ok
+      ? "✅ إجابة صحيحة"
+      : (selected === -1
+          ? `❌ لم تجب على هذا السؤال — الإجابة الصحيحة: ${LETTERS[q.answer]}`
+          : `❌ إجابة خاطئة — الإجابة الصحيحة: ${LETTERS[q.answer]}`);
+    fb.innerHTML = `<div class="fb-title">${title}</div><div class="fb-explain">${q.explain}</div>`;
+  });
+  typeset([$("questions")]);
+}
+
+function showBanner(score, total, timeSeconds) {
+  const pct = Math.round((score / total) * 100);
+  const banner = $("result-banner");
+  banner.classList.remove("hidden");
+  banner.innerHTML = `
+    <div class="label">نتيجتك يا ${studentName}</div>
+    <div class="score">${score} / ${total}</div>
+    <div class="pct">${pct}% • الوقت: ${fmtTime(timeSeconds)}</div>
+    <div id="sync-status">جارٍ حفظ النتيجة...</div>
+    <div><button id="retry-btn" class="btn hidden">إعادة محاولة الحفظ</button></div>`;
+  $("retry-btn").addEventListener("click", () => sendResult(lastPayload));
+}
+
+function setSync(msg) { const el = $("sync-status"); if (el) el.textContent = msg; }
+
+async function sendResult(payload) {
+  const retry = $("retry-btn");
+  if (retry) retry.classList.add("hidden");
+  setSync("جارٍ حفظ النتيجة...");
+
+  const body = JSON.stringify(payload);
+  try {
+    /* text/plain يتجنب طلب preflight مع Google Apps Script */
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body,
+      redirect: "follow"
+    });
+    let data = null;
+    try { data = await res.json(); } catch (_) { /* قد لا يكون الرد JSON */ }
+
+    if (res.ok && !(data && (data.error || data.success === false))) {
+      setSync("✅ تم حفظ نتيجتك بنجاح");
+    } else {
+      setSync("⚠️ تعذر حفظ النتيجة: " + ((data && data.error) || "خطأ في الخادم"));
+      if (retry) retry.classList.remove("hidden");
+    }
+  } catch (e) {
+    /* احتمال حجب CORS: نعيد الإرسال بوضع no-cors (لا يمكن قراءة الرد) */
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body
+      });
+      setSync("✅ تم إرسال نتيجتك");
+    } catch (e2) {
+      setSync("⚠️ تعذر الاتصال بالخادم، لم يتم حفظ النتيجة");
+      if (retry) retry.classList.remove("hidden");
+    }
+  }
+}
+
+async function submitExam() {
+  if (submitted) return;
+
+  let unanswered = 0;
+  QUESTIONS.forEach((_, idx) => {
+    if (!document.querySelector(`input[name="q${idx}"]:checked`)) unanswered++;
+  });
+  if (unanswered > 0 &&
+      !confirm(`لم تجب على ${unanswered} سؤال/أسئلة. هل تريد إنهاء الامتحان وإرسال النتيجة؟`)) return;
+
+  const btn = $("submit-btn");
+  btn.disabled = true;
+  btn.textContent = "جارٍ التصحيح والإرسال...";
+
+  submitted = true;
+  examActive = false;
+  clearInterval(timerHandle);
+  const timeSeconds = Math.floor((Date.now() - startTime) / 1000);
+
+  const { score, weaknesses, details } = gradeExam();
+  const total = QUESTIONS.length;
+
+  showFeedback();
+  showBanner(score, total, timeSeconds);
+  $("submit-msg").textContent = "";
+  btn.classList.add("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  lastPayload = {
+    studentId: String(studentId),
+    subject: EXAM_META.subject,
+    module: EXAM_META.module,
+    lesson: EXAM_META.lesson,
+    assessmentType: EXAM_META.type,
+    score,
+    total,
+    timeSeconds,
+    weaknesses,
+    details
+  };
+  await sendResult(lastPayload);
+}
+
+/* =====================================================================
+   تكبير الصور
+   ===================================================================== */
+function openLightbox(src) {
+  const lb = $("lightbox");
+  lb.querySelector("img").src = src;
+  lb.classList.add("open");
+  lb.setAttribute("aria-hidden", "false");
+}
+$("lightbox").addEventListener("click", () => {
+  $("lightbox").classList.remove("open");
+  $("lightbox").setAttribute("aria-hidden", "true");
+});
+
+/* =====================================================================
+   ربط الأحداث
+   ===================================================================== */
+$("login-btn").addEventListener("click", login);
+$("student-id").addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
+$("submit-btn").addEventListener("click", submitExam);
+
+window.addEventListener("beforeunload", (e) => {
+  if (examActive && !submitted) { e.preventDefault(); e.returnValue = ""; }
+});
+</script>
+</body>
+</html>
